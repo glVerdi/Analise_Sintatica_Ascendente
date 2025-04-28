@@ -7,32 +7,70 @@
 
 %left '+' '-'
 %left '*' '/'
+%left '>'
+%left 'AND'
 
 %%
  
-Prog :  Bloco
-    ;
+Prog : Decl  ListaFuncoes      
+     ;          
 
-Bloco : '{' LCmd '}'
-      ;
+Decl : Tipo LId ';'  Decl
+     |     //produção vazia 
+     :                       
 
-LCmd : LCmd  C
-     |       // vazio
+Tipo : int 
+     | double 
+     | boolean     
+     ;         
+
+LId : LId ',' IDENT
+    | IDENT      
+    ; 
+
+ListaFuncoes : ListaFuncoes Funcao
+             | //produçãoo vazia 
+             ;
+
+
+Funcao : TipoOuVoid ident '('ListaParametrosOuVazio ')' Bloco
+       ;
+
+TipoOuVoid : VOID
+           | Tipo
+           ;
+
+ListaParametrosOuVazio : ListaParametros
+                       | //produçãoo vazia 
+                       ;
+
+ListaParametros : Tipo IDENT 
+                | Tipo IDENT , ListaParametros    
+                ;  
+
+Bloco -->  '{' LCmd '}'            
+
+LCmd : Cmd LCmdo             
+     |     //produçãoo vazia
      ;
 
-C : ident '=' E ';'
-  | IF '(' E ')' THEN C endif
-  | IF '(' E ')' THEN C ELSE C endif  
-  ;
+Cmd : Bloco
+    | if ( E ) Cmd
+    | if ( E ) Cmd else Cmd
+    | while ( E ) Cmd
+    |  E  ;           
+    ;
 
-
-E : E '+' E
-  | E '-' E
-  | E '*' E 
-  | E '/' E
-  | num
-  | ident
-;
+E : E = E        
+  | E + E
+  | E * E   
+  | E / E   
+  | E > E   
+  | E AND E       
+  | NUM
+  | IDENT 
+  | ( E )
+  ;               
 
 
 %%
