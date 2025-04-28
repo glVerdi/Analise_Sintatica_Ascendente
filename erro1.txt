@@ -1,0 +1,14 @@
+$TRACE_OFF
+
+{
+   a = b + b * 5
+
+
+   if (b) then
+      if  (i) then 
+              a = a * a;
+      endif        
+   else
+      a = 1;
+   endif
+}
