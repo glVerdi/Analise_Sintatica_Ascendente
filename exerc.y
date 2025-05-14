@@ -17,7 +17,7 @@ Prog : Decl  ListaFuncoes
 
 Decl : Tipo LId ';'  Decl
      |     //produção vazia 
-     :                       
+     ;                       
 
 Tipo : int 
      | double 
@@ -48,7 +48,8 @@ ListaParametros : Tipo IDENT
                 | Tipo IDENT , ListaParametros    
                 ;  
 
-Bloco -->  '{' LCmd '}'            
+Bloco :  '{' LCmd '}'
+      ;
 
 LCmd : Cmd LCmdo             
      |     //produçãoo vazia
@@ -128,9 +129,3 @@ E : E = E
       System.out.println("done!");
   //  }
   }
-
-
-
-
-
-
