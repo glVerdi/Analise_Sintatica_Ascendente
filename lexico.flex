@@ -1,7 +1,5 @@
 %%
-
 %byaccj
-
 
 %{
   private Parser yyparser;
@@ -12,42 +10,42 @@
   }
 %}
 
-NL  = \n | \r | \r\n
+NL = \n | \r | \r\n
 
 %%
 
-"$TRACE_ON"  { yyparser.setDebug(true);  }
-"$TRACE_OFF" { yyparser.setDebug(false); }
+// Palavras-chave
+"if"       { return Parser.IF; }
+"else"     { return Parser.ELSE; }
+"while"    { return Parser.WHILE; }
+"int"      { return Parser.INT; }
+"double"   { return Parser.DOUBLE; }
+"boolean"  { return Parser.BOOLEAN; }
+"void"     { return Parser.VOID; }
+"AND"      { return Parser.AND; }
 
-if { return Parser.IF;}
-do { return Parser.DO; }
-to { return Parser.TO; }
-then { return Parser.THEN;}
-else { return Parser.ELSE;}
-by { return Parser.BY;} 
-endif { return Parser.endif;}
+// Literais e identificadores
+[0-9]+     { return Parser.NUM; }
+[a-zA-Z_][a-zA-Z0-9_]*  { return Parser.IDENT; }
 
-[0-9]+ { return Parser.num;}
-[a-zA-Z][a-zA-Z0-9]* { return Parser.ident;}
+// Operadores e símbolos
+"="        { return Parser.EQ; }     // você pode usar EQ ou diretamente '=' se preferir
+"+"        { return '+'; }
+"-"        { return '-'; }
+"*"        { return '*'; }
+"/"        { return '/'; }
+">"        { return Parser.GT; }
 
-"{" |
-"}" |
-"=" |
-"(" |
-")" |
-";" |
-"*" |
-"/" |
-"+" |
-"-"     { return (int) yycharat(0); }
+","        { return ','; }
+";"        { return ';'; }
+"("        { return '('; }
+")"        { return ')'; }
+"{"        { return '{'; }
+"}"        { return '}'; }
 
-[ \t]+ { }
-{NL}+  { } 
+// Ignorar espaços e quebras de linha
+[ \t]+     { }
+{NL}+      { }
 
-.    { System.err.println("Error: unexpected character '"+yytext()+"' na linha "+yyline); return YYEOF; }
-
-
-
-
-
-
+// Tratamento de erro
+.          { System.err.println("Erro: caractere inesperado '" + yytext() + "' na linha " + (yyline + 1)); return YYEOF; }
