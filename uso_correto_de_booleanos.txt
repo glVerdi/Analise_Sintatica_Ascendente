@@ -1,0 +1,8 @@
+boolean maior(int a, int b) {
+  return a > b;
+}
+
+void main() {
+  boolean teste;
+  teste = maior(10, 5);
+}

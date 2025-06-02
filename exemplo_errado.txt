@@ -1,0 +1,24 @@
+int x;
+
+int subtrai(int a, int b) {
+  
+}
+
+void imprime(int v, double w) {
+  int v; 
+  v = v + 1;
+}
+
+double calcula() {
+  return true; 
+}
+
+void antesMain() {}
+
+void main() {
+  int y;
+  y = subtrai(10); 
+  z = 5; 
+}
+
+void depoisDeMain() {} 

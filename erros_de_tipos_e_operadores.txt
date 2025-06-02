@@ -1,0 +1,15 @@
+int x;
+boolean b;
+
+int calcula(int a, int b) {
+  return a + b;
+}
+
+void main() {
+  int resultado;
+  boolean flag;
+
+  resultado = calcula(3, true); 
+  flag = 10 < true;             
+  x = x + b;                    
+}

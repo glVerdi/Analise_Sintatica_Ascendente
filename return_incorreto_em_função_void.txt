@@ -1,0 +1,9 @@
+void escreve() {
+  return 10; 
+}
+
+int calcula() {
+  return; 
+}
+
+void main() {}

@@ -1,0 +1,20 @@
+int a;
+
+int duplica(int n) {
+  return n * 2;
+}
+
+double media(int x, int y) {
+  return (x + y) / 2.0;
+}
+
+void imprimeResultado(int res) {
+  int local;
+  local = res;
+}
+
+void main() {
+  int resultado;
+  resultado = duplica(5);
+  imprimeResultado(resultado);
+}
