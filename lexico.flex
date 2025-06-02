@@ -14,7 +14,6 @@ NL = \n | \r | \r\n
 
 %%
 
-// Palavras-chave
 "if"       { return Parser.IF; }
 "else"     { return Parser.ELSE; }
 "while"    { return Parser.WHILE; }
@@ -24,12 +23,10 @@ NL = \n | \r | \r\n
 "void"     { return Parser.VOID; }
 "AND"      { return Parser.AND; }
 
-// Literais e identificadores
 [0-9]+     { return Parser.NUM; }
 [a-zA-Z_][a-zA-Z0-9_]*  { return Parser.IDENT; }
 
-// Operadores e símbolos
-"="        { return Parser.EQ; }     // você pode usar EQ ou diretamente '=' se preferir
+"="        { return '='; }     
 "+"        { return '+'; }
 "-"        { return '-'; }
 "*"        { return '*'; }
@@ -43,9 +40,7 @@ NL = \n | \r | \r\n
 "{"        { return '{'; }
 "}"        { return '}'; }
 
-// Ignorar espaços e quebras de linha
 [ \t]+     { }
 {NL}+      { }
 
-// Tratamento de erro
 .          { System.err.println("Erro: caractere inesperado '" + yytext() + "' na linha " + (yyline + 1)); return YYEOF; }
