@@ -21,7 +21,6 @@
 
   String funcaoAtual = null;
   Tipo tipoFuncaoAtual = null;
-  boolean viuReturn = false;
 
   void abreEscopo() {
     pilhaEscopos.push(new HashMap<>());
@@ -65,8 +64,6 @@
       yyerror("Tipo incompatível na atribuição: esperado " + destino + ", encontrado " + origem);
   }
 
-  Tipo exprTipo;
-
 %}
 
 %token IF DO TO THEN ELSE ENDIF NUM IDENT RETURN VOID WHILE
@@ -84,27 +81,27 @@
   Tipo tval;
   List<Tipo> ltipo;
   List<String> lstring;
+  Boolean bval;
 }
 
 %type <tval> Tipo TipoOuVoid
 %type <ltipo> ListaParametros
-%type <tval> E Expr Cmd
+%type <tval> E Expr
 %type <tval> ListaArgs
 %type <ltipo> ListaArgsOuVazio
 %type <lstring> LId
+%type <bval> Cmd LCmd Bloco
 
 %%
 
-Prog : Decl ListaFuncoes
-    ;
+Prog : Decl ListaFuncoes ;
 
 Decl : Tipo LId ';' Decl
      {
        for(String var : $2)
          insereVariavel(var, $1);
      }
-     | /* vazio */
-     ;
+     | /* vazio */ ;
 
 Tipo : INT { $$ = Tipo.INT; }
      | DOUBLE { $$ = Tipo.DOUBLE; }
@@ -116,8 +113,7 @@ LId : LId ',' IDENT { $1.add($3); $$ = $1; }
     ;
 
 ListaFuncoes : ListaFuncoes Funcao
-             | Funcao
-             ;
+             | Funcao ;
 
 Funcao : TipoOuVoid IDENT '(' ListaParametrosOuVazio ')' Bloco
       {
@@ -130,11 +126,10 @@ Funcao : TipoOuVoid IDENT '(' ListaParametrosOuVazio ')' Bloco
           yyerror("Função main deve ser a última declarada");
         }
 
-        if ($1 != Tipo.VOID && !viuReturn) {
+        if ($1 != Tipo.VOID && !$6) {
           yyerror("Função "+$2+" deve ter um comando return");
         }
 
-        viuReturn = false;
         tipoFuncaoAtual = null;
         funcaoAtual = null;
       }
@@ -162,35 +157,32 @@ ListaParametros : Tipo IDENT {
                 }
                 ;
 
-Bloco : '{' LCmd '}'
-      {
-        fechaEscopo();
-      }
+Bloco : '{' LCmd '}' { fechaEscopo(); $$ = $2; }
       ;
 
-LCmd : Cmd LCmd
-     | /* vazio */
+LCmd : Cmd LCmd { $$ = $1 || $2; }
+     | /* vazio */ { $$ = false; }
      ;
 
-Cmd : Bloco
-    | IF '(' E ')' Cmd
-    | IF '(' E ')' Cmd ELSE Cmd
-    | WHILE '(' E ')' Cmd
+Cmd : Bloco { $$ = $1; }
+    | IF '(' E ')' Cmd { $$ = $5; }
+    | IF '(' E ')' Cmd ELSE Cmd { $$ = $5 && $7; }
+    | WHILE '(' E ')' Cmd { $$ = false; }
     | RETURN E ';'
       {
         if (tipoFuncaoAtual == Tipo.VOID)
           yyerror("Função void não deve retornar valor");
         else if (!tiposCompativeis(tipoFuncaoAtual, $2))
           yyerror("Tipo retornado incompatível: esperado "+tipoFuncaoAtual+" encontrado "+$2);
-        viuReturn = true;
+        $$ = true;
       }
     | RETURN ';'
       {
         if (tipoFuncaoAtual != Tipo.VOID)
           yyerror("Função não-void deve retornar um valor");
-        viuReturn = true;
+        $$ = true;
       }
-    | E ';'
+    | E ';' { $$ = false; }
     ;
 
 E : E '=' E { checaTipoAtribuicao($1, $3); $$ = $1; }
@@ -231,7 +223,6 @@ ListaArgs : E { List<Tipo> args = new ArrayList<>(); args.add($1); $$ = args; }
 
 %%
 
-// Verifica se main é a última função declarada
 private boolean isUltimaFuncao(String nome) {
   boolean depoisDeMain = false;
   boolean achouMain = false;
@@ -270,7 +261,7 @@ public static void main(String args[]) throws IOException {
     reader = new FileReader(args[0]);
   else
     reader = new InputStreamReader(System.in);
-    
+
   Parser parser = new Parser(reader);
   parser.yyparse();
 }
